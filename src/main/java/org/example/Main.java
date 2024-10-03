@@ -6,10 +6,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -35,6 +32,16 @@ public class Main {
                 List<Book> sortedBooks = bookService.getBooksSortedByYear();
                 System.out.println("Книги, отсортированные по году издания:");
                 sortedBooks.forEach(book -> System.out.println(book.getName() + ", Год издания: " + book.getPublishingYear()));
+                break;
+            case 4:
+                Map<Visitor, Book> visitorsWithJaneAusten = bookService.findVisitorsWithBookByAuthor(visitors, "Jane Austen");
+                if (visitorsWithJaneAusten.isEmpty()) {
+                    System.out.println("Нет посетителей с книгами автора 'Jane Austen'.");
+                } else {
+                    System.out.println("Посетители с книгами автора 'Jane Austen':");
+                    visitorsWithJaneAusten.forEach((visitor, book) ->
+                            System.out.println(visitor.getName() + ": " + book.getName()));
+                }
                 break;
             default:
                 System.out.println("Неверный номер задания.");

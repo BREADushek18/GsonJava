@@ -25,4 +25,14 @@ public class BookService {
                 .sorted(Comparator.comparingInt(Book::getPublishingYear))
                 .collect(Collectors.toList());
     }
+
+    // Задание 4: Проверить, есть ли у кого-то в избранном книга автора "Jane Austen"
+    public Map<Visitor, Book> findVisitorsWithBookByAuthor(List<Visitor> visitors, String author) {
+        return visitors.stream()
+                .flatMap(visitor -> visitor.getFavoriteBooks().stream() // Используем поле напрямую
+                        .filter(book -> book.getAuthor().equalsIgnoreCase(author)
+                        ).map(book -> Map.entry(visitor, book)))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
 }

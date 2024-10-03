@@ -42,4 +42,31 @@ public class BookService {
                 .max()
                 .orElse(0); // Если нет посетителей, возвращаем 0
     }
+
+    // Задание 6: Группировка посетителей и создание SMS-сообщений
+    public List<SmsMessage> generateSmsMessages(List<Visitor> visitors) {
+        int maxCount = getMaxFavoriteBooksCount(visitors);
+
+        // Вычисляем половину от максимального значения
+        int halfMaxCount = (int) Math.ceil(maxCount / 2.0); // Округляем вверх
+
+        List<SmsMessage> smsMessages = new ArrayList<>();
+
+        for (Visitor visitor : visitors) {
+            int favoriteCount = visitor.getFavoriteBooks().size();
+            String message;
+
+            if (favoriteCount > halfMaxCount) {
+                message = "you are a bookworm";
+            } else if (favoriteCount < halfMaxCount) {
+                message = "read more";
+            } else {
+                message = "fine";
+            }
+
+            smsMessages.add(new SmsMessage(visitor.getPhone(), message));
+        }
+
+        return smsMessages;
+    }
 }

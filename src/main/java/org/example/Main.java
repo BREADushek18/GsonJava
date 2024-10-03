@@ -47,6 +47,11 @@ public class Main {
                 int maxFavoriteBooksCount = bookService.getMaxFavoriteBooksCount(visitors);
                 System.out.println("Максимальное количество книг в избранном у посетителей: " + maxFavoriteBooksCount);
                 break;
+            case 6:
+                List<SmsMessage> smsMessages = bookService.generateSmsMessages(visitors);
+                System.out.println("SMS сообщения:");
+                smsMessages.forEach(sms -> System.out.println("На номер " + sms.getPhoneNumber() + ": " + sms.getMessage()));
+                break;
             default:
                 System.out.println("Неверный номер задания.");
         }

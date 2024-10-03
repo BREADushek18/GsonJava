@@ -35,4 +35,11 @@ public class BookService {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    // Задание 5: Получить максимальное количество книг в избранном у посетителей
+    public int getMaxFavoriteBooksCount(List<Visitor> visitors) {
+        return visitors.stream()
+                .mapToInt(visitor -> visitor.getFavoriteBooks().size())
+                .max()
+                .orElse(0); // Если нет посетителей, возвращаем 0
+    }
 }

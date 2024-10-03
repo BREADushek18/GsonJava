@@ -43,6 +43,10 @@ public class Main {
                             System.out.println(visitor.getName() + ": " + book.getName()));
                 }
                 break;
+            case 5:
+                int maxFavoriteBooksCount = bookService.getMaxFavoriteBooksCount(visitors);
+                System.out.println("Максимальное количество книг в избранном у посетителей: " + maxFavoriteBooksCount);
+                break;
             default:
                 System.out.println("Неверный номер задания.");
         }

@@ -34,13 +34,14 @@ public class Main {
                 sortedBooks.forEach(book -> System.out.println(book.getName() + ", Год издания: " + book.getPublishingYear()));
                 break;
             case 4:
-                Map<Visitor, Book> visitorsWithJaneAusten = bookService.findVisitorsWithBookByAuthor(visitors, "Jane Austen");
-                if (visitorsWithJaneAusten.isEmpty()) {
+                boolean hasVisitorsWithJaneAusten = bookService.hasVisitorsWithBookByAuthor(visitors, "Jane Austen");
+                if (!hasVisitorsWithJaneAusten) {
                     System.out.println("Нет посетителей с книгами автора 'Jane Austen'.");
                 } else {
                     System.out.println("Посетители с книгами автора 'Jane Austen':");
-                    visitorsWithJaneAusten.forEach((visitor, book) ->
-                            System.out.println(visitor.getName() + ": " + book.getName()));
+                    for (Visitor visitor : visitors) {
+                        accept(visitor);
+                    }
                 }
                 break;
             case 5:
@@ -75,5 +76,11 @@ public class Main {
             allFavoriteBooks.addAll(visitor.getFavoriteBooks());
         }
         return allFavoriteBooks; // Возвращаем все любимые книги
+    }
+
+    private static void accept(Visitor visitor) {
+        visitor.getFavoriteBooks().stream()
+                .filter(book -> book.getAuthor().equalsIgnoreCase("Jane Austen"))
+                .forEach(book -> System.out.println(visitor.getName() + ": " + book.getName()));
     }
 }

@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class BookService {
-    private List<Book> books; // Список всех книг
+    private final List<Book> books;
 
     public BookService(List<Book> books) {
         this.books = books;
@@ -12,10 +12,8 @@ public class BookService {
 
     // Задание 2: Получить список уникальных книг в избранном
     public Set<Book> getUniqueFavoriteBooks(List<Visitor> visitors) {
-        // Предположим, что у вас есть способ получить любимые книги из посетителей
-        // Например, у каждого посетителя может быть список любимых книг
         return visitors.stream()
-                .flatMap(visitor -> visitor.getFavoriteBooks().stream()) // Метод getFavoriteBooks должен быть добавлен в класс Visitor
+                .flatMap(visitor -> visitor.getFavoriteBooks().stream())
                 .collect(Collectors.toSet());
     }
 
@@ -27,12 +25,10 @@ public class BookService {
     }
 
     // Задание 4: Проверить, есть ли у кого-то в избранном книга автора "Jane Austen"
-    public Map<Visitor, Book> findVisitorsWithBookByAuthor(List<Visitor> visitors, String author) {
+    public boolean hasVisitorsWithBookByAuthor(List<Visitor> visitors, String author) {
         return visitors.stream()
-                .flatMap(visitor -> visitor.getFavoriteBooks().stream() // Используем поле напрямую
-                        .filter(book -> book.getAuthor().equalsIgnoreCase(author)
-                        ).map(book -> Map.entry(visitor, book)))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+                .anyMatch(visitor -> visitor.getFavoriteBooks().stream()
+                        .anyMatch(book -> book.getAuthor().equalsIgnoreCase(author)));
     }
 
     // Задание 5: Получить максимальное количество книг в избранном у посетителей
@@ -45,28 +41,23 @@ public class BookService {
 
     // Задание 6: Группировка посетителей и создание SMS-сообщений
     public List<SmsMessage> generateSmsMessages(List<Visitor> visitors) {
-        int maxCount = getMaxFavoriteBooksCount(visitors);
+        int average = (int) Math.ceil(visitors.stream().mapToInt(visitor -> visitor.getFavoriteBooks().size()).average().orElse(0));
 
-        // Вычисляем половину от максимального значения
-        int halfMaxCount = (int) Math.ceil(maxCount / 2.0); // Округляем вверх
+        return visitors.stream()
+                .map(visitor -> {
+                    int favoriteCount = visitor.getFavoriteBooks().size();
+                    String message;
 
-        List<SmsMessage> smsMessages = new ArrayList<>();
+                    if (favoriteCount > average) {
+                        message = "you are a bookworm";
+                    } else if (favoriteCount < average) {
+                        message = "read more";
+                    } else {
+                        message = "fine";
+                    }
 
-        for (Visitor visitor : visitors) {
-            int favoriteCount = visitor.getFavoriteBooks().size();
-            String message;
-
-            if (favoriteCount > halfMaxCount) {
-                message = "you are a bookworm";
-            } else if (favoriteCount < halfMaxCount) {
-                message = "read more";
-            } else {
-                message = "fine";
-            }
-
-            smsMessages.add(new SmsMessage(visitor.getPhone(), message));
-        }
-
-        return smsMessages;
+                    return new SmsMessage(visitor.getPhone(), message);
+                })
+                .collect(Collectors.toList());
     }
 }

@@ -29,9 +29,7 @@ public class VisitorService {
 
     public void printVisitors() {
         System.out.println("Список посетителей:");
-        visitors.forEach(visitor ->
-                System.out.println(visitor.getName() + " " + visitor.getSurname())
-        );
+        visitors.forEach(System.out::println);
         System.out.println("Общее количество посетителей: " + visitors.size());
     }
 }
